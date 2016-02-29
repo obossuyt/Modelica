@@ -1,0 +1,429 @@
+#1
+char Aclass(3,24)
+Adymosim
+1.4
+Modelica experiment file
+
+
+#    Experiment parameters
+double experiment(7,1)
+       0                   # StartTime    Time at which integration starts
+                           #              (and linearization and trimming time)
+ 3.2600000000000000E+007   # StopTime     Time at which integration stops
+       0                   # Increment    Communication step size, if > 0
+     500                   # nInterval    Number of communication intervals, if > 0
+ 1.0000000000000000E-004   # Tolerance    Relative precision of signals for
+                           #              simulation, linearization and trimming
+       0                   # MaxFixedStep Maximum step size of fixed step size
+                           #              integrators, if > 0.0
+       8                   # Algorithm    Integration algorithm as integer (1...28)
+                           #
+                           #             | model|       |        | dense | state |
+                           # Algorithm   | typ  | stiff | order  | output| event |
+                           # ------------+------+-------+--------+-------+-------+
+                           #  1 | deabm  |  ode |   no  |  1-12  |  yes  |   no  |
+                           #  2 | lsode1 |  ode |   no  |  1-12  |  yes  |   no  |
+                           #  3 | lsode2 |  ode |  yes  |  1-5   |  yes  |   no  |
+                           #  4 | lsodar |  ode |  both |1-12,1-5|  yes  |  yes  |
+                           #  5 | dopri5 |  ode |   no  |   5    |   no  |   no  |
+                           #  6 | dopri8 |  ode |   no  |   8    |   no  |   no  |
+                           #  7 | grk4t  |  ode |  yes  |   4    |   no  |   no  |
+                           #  8 | dassl  |  dae |  yes  |  1-5   |  yes  |  yes  |
+                           #  9 | odassl | hdae |  yes  |  1-5   |  yes  |  yes  |
+                           # 10 | mexx   | hdae |   no  |  2-24  |   no  |   no  |
+                           # 11 | euler  |  ode |   no  |   1    |   no  |  yes  |
+                           # 12 | rkfix2 |  ode |   no  |   2    |   no  |  yes  |
+                           # 13 | rkfix3 |  ode |   no  |   3    |   no  |  yes  |
+                           # 14 | rkfix4 |  ode |   no  |   4    |   no  |  yes  |
+                           #>=14| others |  ode |yes/no |  2-5   |   yes |  yes  |
+                           # ---+--------+------+-------+--------+-------+-------+
+                           # euler and rkfix have fixed stepsize.
+
+
+#    Method tuning parameters
+double method(27,1)
+       1                   # grid     type of communication time grid, defined by
+                           #          = 1: equidistant points ("Increment/nInterval")
+                           #          = 2: vector of grid points ("tgrid")
+                           #          = 3: variable step integrator (automatically)
+                           #          = 4: model (call of "increment" in Dymola, e.g.
+                           #                      incr=Time > 2 then 0 else 0.1
+                           #                      dummy=increment(incr))
+                           #          grid = 1,3 is stopped by "StopTime"
+                           #          grid = 2   is stopped by "tgrid(last)"
+                           #          grid = 4   runs forever (stopped by model)
+       1                   # nt       Use every NT time instant, if grid = 3
+       3                   # dense    1/2/3 restart/step/interpolate GRID points
+       1                   # evgrid   0/1 do not/save event points in comm. time grid
+       1                   # evu      0/1 U-discontinuity does not/trigger events
+       0                   # evuord       U-discontinuity order to consider (0,1,...)
+       0                   # error    0/1/2 One message/warning/error messages
+       0                   # jac      0/1 Compute jacobian numerically/by BLOCKJ
+       0                   # xd0c     0/1 Compute/set XD0
+       0                   # f3       0/1 Ignore/use F3 of HDAE (= index 1)
+       0                   # f4       0/1 Ignore/use F4 of HDAE (= index 2)
+       0                   # f5       0/1 Ignore/use F5 of HDAE (= invar.)
+       0                   # debug    flags for debug information (1<<0 uses pdebug) 
+     100                   # pdebug       priority of debug information (1...100)
+       0                   # fmax     Maximum number of evaluations of BLOCKF, if > 0
+       0                   # ordmax   Maximum allowed integration order, if > 0
+       0                   # hmax     Maximum absolute stepsize, if > 0
+       0                   # hmin     Minimum absolute stepsize, if > 0 (use with care!)
+       0                   # h0       Stepsize to be attempted on first step, if > 0
+ 2.0000000000000000E-014   # teps     Bound to check, if 2 equal time instants
+ 1.0000000000000000E-010   # eveps    Hysteresis epsilon at event points
+      20                   # eviter   Maximum number of event iterations
+ 9.9999999999999995E-007   # delaym   Minimum time increment in delay buffers
+       1                   # fexcep   0/1 floating exception crashes/stops dymosim
+       1                   # tscale   clock-time = tscale*simulation-time, if grid = 5
+                           #          > 1: simulation too slow
+                           #          = 1: simulation-time = real-time
+                           #          < 1: simulation too fast
+       1                   # shared   (not used)
+    2473                   # memkey   (not used)
+
+
+#    Output parameters
+int settings(13,1)
+ 0                         # lprec    0/1 do not/store result data in double
+ 1                         # lx       0/1 do not/store x  (state variables)
+ 1                         # lxd      0/1 do not/store xd (derivative of states)
+ 1                         # lu       0/1 do not/store u  (input     signals)
+ 1                         # ly       0/1 do not/store y  (output    signals)
+ 0                         # lz       0/1 do not/store z  (indicator signals)
+ 1                         # lw       0/1 do not/store w  (auxiliary signals)
+ 1                         # la       0/1 do not/store a  (alias     signals)
+ 0                         # lperf    0/1 do not/store performance indicators
+ 0                         # levent   0/1 do not/store event point
+ 1                         # lres     0/1 do not/store results on result file
+ 0                         # lshare   0/1 do not/store info data for shared memory on dsshare.txt
+ 1                         # lform    0/1 ASCII/Matlab-binary storage format of results
+                           #              (for simulation/linearization; not for trimming)
+
+
+#    Names of initial variables
+char initialName(90,29)
+RSlab1.Q_flow
+RSlab1.dT
+RSlab1.R
+RSlab2.Q_flow
+RSlab2.dT
+RSlab2.port_a.T
+RSlab2.R
+RWall.Q_flow
+RWall.dT
+RWall.port_a.T
+RWall.R
+CZone.C
+CZone.T
+CZone.der(T)
+CZone.port.Q_flow
+RGro2[1].Q_flow
+RGro2[1].dT
+RGro2[1].port_a.Q_flow
+RGro2[1].port_b.Q_flow
+RGro2[1].R
+RGro2[2].Q_flow
+RGro2[2].dT
+RGro2[2].port_a.Q_flow
+RGro2[2].port_b.Q_flow
+RGro2[2].R
+RGro2[3].Q_flow
+RGro2[3].dT
+RGro2[3].port_a.Q_flow
+RGro2[3].port_b.Q_flow
+RGro2[3].R
+RGro2[4].Q_flow
+RGro2[4].dT
+RGro2[4].port_a.Q_flow
+RGro2[4].port_b.Q_flow
+RGro2[4].R
+RGro2[5].dT
+RGro2[5].R
+RGro1[1].dT
+RGro1[1].R
+RGro1[2].Q_flow
+RGro1[2].dT
+RGro1[2].port_a.Q_flow
+RGro1[2].port_b.Q_flow
+RGro1[2].R
+RGro1[3].Q_flow
+RGro1[3].dT
+RGro1[3].port_a.Q_flow
+RGro1[3].port_b.Q_flow
+RGro1[3].R
+RGro1[4].Q_flow
+RGro1[4].dT
+RGro1[4].port_a.Q_flow
+RGro1[4].port_b.Q_flow
+RGro1[4].R
+RGro1[5].Q_flow
+RGro1[5].dT
+RGro1[5].port_a.Q_flow
+RGro1[5].port_b.Q_flow
+RGro1[5].R
+CGro[1].C
+CGro[1].T
+CGro[1].der(T)
+CGro[2].C
+CGro[2].T
+CGro[2].der(T)
+CGro[2].port.Q_flow
+CGro[3].C
+CGro[3].T
+CGro[3].der(T)
+CGro[3].port.Q_flow
+CGro[4].C
+CGro[4].T
+CGro[4].der(T)
+CGro[4].port.Q_flow
+CGro[5].C
+CGro[5].T
+CGro[5].der(T)
+CSlab.C
+CSlab.T
+CSlab.der(T)
+CSlab.port.Q_flow
+TGroIni.T
+TGroIni.port.Q_flow
+QSol.T_ref
+QSol.alpha
+QSol.Q_flow
+QSol.port.Q_flow
+TSlab.T
+TSlab.port.Q_flow
+temperatureSensor.port.Q_flow
+
+double initialValue(90,6)
+  0       0                  0       0                  6  256   # RSlab1.Q_flow
+  0       0                  0       0                  6  256   # RSlab1.dT
+ -1 1.6000000000000000E-002  0       0                  1  280   # RSlab1.R
+  0       0                  0       0                  6  256   # RSlab2.Q_flow
+  0       0                  0       0                  6  256   # RSlab2.dT
+  0 2.8814999999999998E+002  0 1.0000000000000000E+100  6  260   # RSlab2.port_a.T
+ -1 1.6000000000000000E-002  0       0                  1  280   # RSlab2.R
+  0       0                  0       0                  6  256   # RWall.Q_flow
+  0       0                  0       0                  6  256   # RWall.dT
+  0 2.8814999999999998E+002  0 1.0000000000000000E+100  6  260   # RWall.port_a.T
+ -1 8.0599999999999995E-003  0       0                  1  280   # RWall.R
+ -1 2.4096000000000000E+008  0       0                  1  280   # CZone.C
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  2  280   # CZone.T
+  0       0                  0       0                  3  256   # CZone.der(T)
+  0       0                  0       0                  6  388   # CZone.port.Q_flow
+  0       0                  0       0                  6  256   # RGro2[1].Q_flow
+  0       0                  0       0                  6  256   # RGro2[1].dT
+  0       0                  0       0                  6  388   # RGro2[1].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro2[1].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro2[1].R
+  0       0                  0       0                  6  256   # RGro2[2].Q_flow
+  0       0                  0       0                  6  256   # RGro2[2].dT
+  0       0                  0       0                  6  388   # RGro2[2].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro2[2].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro2[2].R
+  0       0                  0       0                  6  256   # RGro2[3].Q_flow
+  0       0                  0       0                  6  256   # RGro2[3].dT
+  0       0                  0       0                  6  388   # RGro2[3].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro2[3].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro2[3].R
+  0       0                  0       0                  6  256   # RGro2[4].Q_flow
+  0       0                  0       0                  6  256   # RGro2[4].dT
+  0       0                  0       0                  6  388   # RGro2[4].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro2[4].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro2[4].R
+  0       0                  0       0                  6  256   # RGro2[5].dT
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro2[5].R
+  0       0                  0       0                  6  256   # RGro1[1].dT
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro1[1].R
+  0       0                  0       0                  6  256   # RGro1[2].Q_flow
+  0       0                  0       0                  6  256   # RGro1[2].dT
+  0       0                  0       0                  6  388   # RGro1[2].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro1[2].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro1[2].R
+  0       0                  0       0                  6  256   # RGro1[3].Q_flow
+  0       0                  0       0                  6  256   # RGro1[3].dT
+  0       0                  0       0                  6  388   # RGro1[3].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro1[3].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro1[3].R
+  0       0                  0       0                  6  256   # RGro1[4].Q_flow
+  0       0                  0       0                  6  256   # RGro1[4].dT
+  0       0                  0       0                  6  388   # RGro1[4].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro1[4].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro1[4].R
+  0       0                  0       0                  6  256   # RGro1[5].Q_flow
+  0       0                  0       0                  6  256   # RGro1[5].dT
+  0       0                  0       0                  6  388   # RGro1[5].port_a.Q_flow
+  0       0                  0       0                  6  388   # RGro1[5].port_b.Q_flow
+ -1 3.3000000000000002E-002  0       0                  1  280   # RGro1[5].R
+ -1 2.5200000000000000E+008  0       0                  1  280   # CGro[1].C
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  2  280   # CGro[1].T
+  0       0                  0       0                  3  256   # CGro[1].der(T)
+ -1 2.5200000000000000E+008  0       0                  1  280   # CGro[2].C
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  2  280   # CGro[2].T
+  0       0                  0       0                  3  256   # CGro[2].der(T)
+  0       0                  0       0                  6  388   # CGro[2].port.Q_flow
+ -1 2.5200000000000000E+008  0       0                  1  280   # CGro[3].C
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  2  280   # CGro[3].T
+  0       0                  0       0                  3  256   # CGro[3].der(T)
+  0       0                  0       0                  6  388   # CGro[3].port.Q_flow
+ -1 2.5200000000000000E+008  0       0                  1  280   # CGro[4].C
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  2  280   # CGro[4].T
+  0       0                  0       0                  3  256   # CGro[4].der(T)
+  0       0                  0       0                  6  388   # CGro[4].port.Q_flow
+ -1 2.5200000000000000E+008  0       0                  1  280   # CGro[5].C
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  2  280   # CGro[5].T
+  0       0                  0       0                  3  256   # CGro[5].der(T)
+ -1 3.3600000000000000E+008  0       0                  1  280   # CSlab.C
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  2  280   # CSlab.T
+  0       0                  0       0                  3  256   # CSlab.der(T)
+  0       0                  0       0                  6  388   # CSlab.port.Q_flow
+ -1 2.8314999999999998E+002  0 1.0000000000000000E+100  1  280   # TGroIni.T
+  0       0                  0       0                  6  388   # TGroIni.port.Q_flow
+ -1 2.9314999999999998E+002  0 1.0000000000000000E+100  1  280   # QSol.T_ref
+ -1       0                  0       0                  1  280   # QSol.alpha
+  0       0                  0       0                  6  256   # QSol.Q_flow
+  0       0                  0       0                  6  388   # QSol.port.Q_flow
+  0       0                  0       0                  6  256   # TSlab.T
+  0       0                  0       0                  6  388   # TSlab.port.Q_flow
+  0       0                  0       0                  6  388   # temperatureSensor.port.Q_flow
+
+
+# Matrix with 6 columns defining the initial value calculation
+# (columns 5 and 6 are not utilized for the calculation but are
+#  reported by dymosim via dymosim -i for user convenience):
+#
+# column 1: Type of initial value
+#           = -2: special case: for continuing simulation (column 2 = value)
+#           = -1: fixed value (column 2 = fixed value)
+#           =  0: free value, i.e., no restriction (column 2 = initial value)
+#           >  0: desired value (column 1 = weight for optimization
+#                                column 2 = desired value)
+#                 use weight=1, since automatic scaling usually
+#                 leads to equally weighted terms
+# column 2: fixed, free or desired value according to column 1.
+# column 3: Minimum value (ignored, if Minimum >= Maximum).
+# column 4: Maximum value (ignored, if Minimum >= Maximum).
+#           Minimum and maximum restrict the search range in initial
+#           value calculation. They might also be used for scaling.
+# column 5: Category of variable.
+#           = 1: parameter.
+#           = 2: state.
+#           = 3: state derivative.
+#           = 4: output.
+#           = 5: input.
+#           = 6: auxiliary variable.
+# column 6: Data type of variable.
+#           = 0: real.
+#           = 1: boolean.
+#           = 2: integer.
+#
+# Initial values are calculated according to the following procedure:
+#
+# - If parameters, states and inputs are FIXED, and other variables
+#   are FREE, no special action takes place (default setting).
+#
+# - If there are only FIXED and FREE variables and the number of
+#   FREE parameters, states and inputs is IDENTICAL to the number of
+#   FIXED state derivatives, outputs and auxiliary variables, a non-linear
+#   equation is solved to determine a consistent set of initial conditions.
+#
+# - In all other cases the following optimization problem is solved:
+#      min( sum( weight(i)*( (value(i) - DESIRED(i))/scale(i) )^2 ) )
+#   under the constraint that the differential equation is fulfilled
+#   at the initial time. In most cases weight(i)=1 is sufficient, due
+#   to the automatic scaling (if DESIRED(i) is not close to zero,
+#   scale(i) = DESIRED(i). Otherwise, the scaling is based on the
+#   nominal value (and maybe minimum and maximum values given in 
+#   column 3 and 4). If these values are zero, scale(i)=1 is used).
+#
+char initialDescription(90,72)
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Port temperature [K|degC]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Port temperature [K|degC]
+Constant thermal resistance of material [K/W]
+Heat capacity of element (= cp*m) [J/K]
+Temperature of element [K|degC]
+der(Temperature of element) [K/s]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+port_a.T - port_b.T [K,]
+Constant thermal resistance of material [K/W]
+port_a.T - port_b.T [K,]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+Heat flow rate from port_a -> port_b [W]
+port_a.T - port_b.T [K,]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Constant thermal resistance of material [K/W]
+Heat capacity of element (= cp*m) [J/K]
+Temperature of element [K|degC]
+der(Temperature of element) [K/s]
+Heat capacity of element (= cp*m) [J/K]
+Temperature of element [K|degC]
+der(Temperature of element) [K/s]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat capacity of element (= cp*m) [J/K]
+Temperature of element [K|degC]
+der(Temperature of element) [K/s]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat capacity of element (= cp*m) [J/K]
+Temperature of element [K|degC]
+der(Temperature of element) [K/s]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat capacity of element (= cp*m) [J/K]
+Temperature of element [K|degC]
+der(Temperature of element) [K/s]
+Heat capacity of element (= cp*m) [J/K]
+Temperature of element [K|degC]
+der(Temperature of element) [K/s]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Fixed temperature at port [K|K]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Reference temperature [K|degC]
+Temperature coefficient of heat flow rate [1/K]
+[W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Absolute temperature in degree Celsius as output signal [degC]
+Heat flow rate (positive if flowing from outside into the component) [W]
+Heat flow rate (positive if flowing from outside into the component) [W]
+
