@@ -3,7 +3,7 @@ package TestPipeModel
   model PipeHeatTransfer
 
     Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rfg(R=0.02)
-      annotation (Placement(transformation(extent={{-44,52},{-24,72}})));
+      annotation (Placement(transformation(extent={{-26,52},{-6,72}})));
     Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rgb(R=0.02)
       annotation (Placement(transformation(extent={{6,52},{26,72}})));
     Modelica.Thermal.HeatTransfer.Components.HeatCapacitor Cg(C=2e+8)
@@ -17,15 +17,25 @@ package TestPipeModel
           rotation=180,
           origin={60,62})));
 
-    package Medium = IDEAS.Media.Specialized.Water.TemperatureDependentDensity;
+    replaceable package Medium =
+        IDEAS.Media.Specialized.Water.TemperatureDependentDensity;
     Real SoC_teller;
     Real SoC_noemer;
     Real SoC;
     parameter Modelica.SIunits.Temperature Tref=pipeData.Tref;
     parameter Modelica.SIunits.Temperature Tmax=pipeData.Tmax;
-    parameter Modelica.SIunits.Density rho=1000 "Density of the medium";
-    parameter Modelica.SIunits.HeatCapacity C_water=4200
-      "heat capacity of medium (now water)";
+
+  // record sta_default=ThermodynamicState;
+
+    // parameter Modelica.SIunits.HeatCapacity Cp_fluid=
+    //  Medium.specificHeatCapacityCp(state=sta_default)
+    // "Specific heat capacity of medium";
+
+    //parameter Modelica.SIunits.Density rho=Medium.density(state=
+    // sta_default) "Density of medium";
+
+    parameter Modelica.SIunits.HeatCapacity Cp_fluid=4200;
+    parameter Modelica.SIunits.Density rho=1000;
 
     IDEAS.Fluid.MixingVolumes.MixingVolume vol(
       redeclare package Medium = Medium,
@@ -34,11 +44,11 @@ package TestPipeModel
       V=pipeData.V) annotation (Placement(transformation(
           extent={{-10,-10},{10,10}},
           rotation=180,
-          origin={-70,-36})));
+          origin={-52,-64})));
     Modelica.Fluid.Interfaces.FluidPort_a port_a(redeclare final package Medium
         = Medium)
       "Fluid connector a (positive design flow direction is from port_a to port_b)"
-      annotation (Placement(transformation(extent={{-114,-8},{-94,12}}),
+      annotation (Placement(transformation(extent={{-112,-8},{-92,12}}),
           iconTransformation(extent={{-122,-26},{-74,22}})));
     Modelica.Fluid.Interfaces.FluidPort_b port_b(redeclare final package Medium
         = Medium)
@@ -56,9 +66,26 @@ package TestPipeModel
     PipeData pipeData
       annotation (Placement(transformation(extent={{-92,64},{-72,84}})));
 
+    IDEAS.Fluid.FixedResistances.FixedResistanceDpM res(
+      redeclare package Medium = Medium,
+      m_flow_nominal=pipeData.m_flow_nominal,
+      dp_nominal=pipeData.dp_nominal)
+      annotation (Placement(transformation(extent={{-92,-10},{-74,12}})));
+
+    parameter Modelica.SIunits.Volume V=pipeData.V;
+
+    Modelica.Fluid.Sensors.Temperature tempSensor(redeclare package Medium =
+          Medium)
+      annotation (Placement(transformation(extent={{-50,-36},{-30,-16}})));
+    Modelica.Fluid.Sensors.Pressure pressureSensor(redeclare package Medium =
+          Medium)
+      annotation (Placement(transformation(extent={{-48,-4},{-28,16}})));
+   // IDEAS.Media.Specialized.Water.TemperatureDependentDensity.ThermodynamicState
+   //   sta_default
+   //   annotation (Placement(transformation(extent={{-82,32},{-62,52}})));
   equation
     connect(Rfg.port_b, Rgb.port_a) annotation (Line(
-        points={{-24,62},{6,62}},
+        points={{-6,62},{6,62}},
         color={191,0,0},
         smooth=Smooth.None));
     connect(Cg.port, Rgb.port_a) annotation (Line(
@@ -70,15 +97,11 @@ package TestPipeModel
         color={191,0,0},
         smooth=Smooth.None));
     connect(Rfg.port_a, vol.heatPort) annotation (Line(
-        points={{-44,62},{-56,62},{-56,-36},{-60,-36}},
+        points={{-26,62},{-30,62},{-30,-64},{-42,-64}},
         color={191,0,0},
         smooth=Smooth.None));
-    connect(vol.ports[1], port_a) annotation (Line(
-        points={{-68,-26},{-82,-26},{-82,2},{-104,2}},
-        color={0,127,255},
-        smooth=Smooth.None));
-    connect(vol.ports[2], port_b) annotation (Line(
-        points={{-72,-26},{-48,-26},{-48,0},{100,0}},
+    connect(vol.ports[1], port_b) annotation (Line(
+        points={{-50,-54},{34,-54},{34,0},{100,0}},
         color={0,127,255},
         smooth=Smooth.None));
     connect(port_b, port_b) annotation (Line(
@@ -89,17 +112,40 @@ package TestPipeModel
         points={{72,62},{108,62}},
         color={0,0,127},
         smooth=Smooth.None));
-    SoC_teller = Cg.C*(Cg.T - Tref) + C_water*(Cg.T - Tref);
+
+    // SoC_teller = Cg.C*(Cg.T - Tref) + Cp_fluid*rho*V*(Cg.T - Tref);
+    SoC_teller = Cg.C*(Cg.T - Tref) + Cp_fluid*(Cg.T - Tref);
+    // Cp_fluid [J/K]
     // ThermodynamicState=Medium.ThermodynamicState.T;
     // d = Medium.density(ThermodynamicState.T);
     // Referentietemperaturen van capaciteiten moeten verschillend zijn?
     // Maximum temperaturen van capaciteiten moeten verschillend zijn
     // De dichtheid, capaciteit en temperatuur van het watervolume: hoe uit Medium Package halen?
 
-    SoC_noemer = Cg.C*(Tmax - Tref) + C_water*(Tmax - Tref);
+    SoC_noemer = Cg.C*(Tmax - Tref) + Cp_fluid*(Tmax - Tref);
 
     SoC = SoC_teller/SoC_noemer;
 
+    connect(res.port_a, port_a) annotation (Line(
+        points={{-92,1},{-96,1},{-96,2},{-102,2}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(port_a, port_a) annotation (Line(
+        points={{-102,2},{-102,2}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(vol.ports[2], res.port_b) annotation (Line(
+        points={{-54,-54},{-62,-54},{-62,1},{-74,1}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(tempSensor.port, res.port_b) annotation (Line(
+        points={{-40,-36},{-62,-36},{-62,1},{-74,1}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(pressureSensor.port, res.port_b) annotation (Line(
+        points={{-38,-4},{-62,-4},{-62,1},{-74,1}},
+        color={0,127,255},
+        smooth=Smooth.None));
     annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
               -100},{100,100}}), graphics), Icon(coordinateSystem(
             preserveAspectRatio=false, extent={{-100,-100},{100,100}}), graphics={
@@ -145,12 +191,13 @@ package TestPipeModel
     package Medium =
         IDEAS.Media.Specialized.Water.TemperatureDependentDensity;
 
-    PipeHeatTransfer pipeHeatTransfer;
+   // PipeHeatTransfer pipeHeatTransfer;
     PipeHeatTransfer pipe
       "Heat transfer in single pipe, flow from port_a to port_b"
       annotation (Placement(transformation(extent={{-16,-36},{4,-16}})));
     IDEAS.Fluid.Movers.FlowControlled_m_flow fan(
-        redeclare package Medium = Medium, m_flow_nominal=pipeData.m_flow_nominal)
+        redeclare package Medium = Medium, m_flow_nominal=pipeData.m_flow_nominal,
+      motorCooledByFluid=false)
       annotation (Placement(transformation(extent={{-10,-10},{10,10}},
           rotation=180,
           origin={-46,16})));
@@ -161,10 +208,13 @@ package TestPipeModel
       annotation (Placement(transformation(extent={{-10,-10},{10,10}},
           rotation=180,
           origin={30,16})));
-    Modelica.Blocks.Sources.Step step(height=283)
+    Modelica.Blocks.Sources.Step step(
+      height=10,
+      offset=273,
+      startTime=500)
       annotation (Placement(transformation(extent={{-6,-6},{6,6}},
           rotation=180,
-          origin={64,44})));
+          origin={64,42})));
     Modelica.Blocks.Sources.RealExpression TWall_val(y=pipeData.TempWall)
       "Average borehole wall temperature" annotation (Placement(transformation(
           extent={{-11,-10},{11,10}},
@@ -176,11 +226,17 @@ package TestPipeModel
           origin={-1,-3})));
 
     PipeData pipeData
-      annotation (Placement(transformation(extent={{-76,30},{-56,50}})));
+      annotation (Placement(transformation(extent={{-88,74},{-68,94}})));
 
+    Modelica.Fluid.Sources.Boundary_pT boundary(          redeclare package
+        Medium = Medium, nPorts=1)
+      annotation (Placement(transformation(extent={{-88,32},{-68,52}})));
+    //IDEAS.Media.Specialized.Water.TemperatureDependentDensity.ThermodynamicState
+      //thermodynamicState
+     // annotation (Placement(transformation(extent={{-26,70},{-6,90}})));
   equation
     connect(hea.TSet, step.y) annotation (Line(
-        points={{42,10},{50,10},{50,44},{57.4,44}},
+        points={{42,10},{50,10},{50,42},{57.4,42}},
         color={0,0,127},
         smooth=Smooth.None));
     connect(pipe.T1, TWall_val.y) annotation (Line(
@@ -202,6 +258,10 @@ package TestPipeModel
     connect(const.y, fan.m_flow_in) annotation (Line(
         points={{-8.7,-3},{-45.8,-3},{-45.8,4}},
         color={0,0,127},
+        smooth=Smooth.None));
+    connect(fan.port_b, boundary.ports[1]) annotation (Line(
+        points={{-56,16},{-60,16},{-60,42},{-68,42}},
+        color={0,127,255},
         smooth=Smooth.None));
       annotation (Placement(transformation(extent={{-8,-26},{12,-6}})),
                 Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
