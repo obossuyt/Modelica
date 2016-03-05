@@ -25,17 +25,19 @@ package TestPipeModel
     parameter Modelica.SIunits.Temperature Tref=pipeData.Tref;
     parameter Modelica.SIunits.Temperature Tmax=pipeData.Tmax;
 
-  // record sta_default=ThermodynamicState;
+    Medium.ThermodynamicState sta_default=Medium.setState_pTX(
+        p=port_a.p,
+        T=tempSensor.T,
+        X=port_a.Xi_outflow);
 
-    // parameter Modelica.SIunits.HeatCapacity Cp_fluid=
-    //  Medium.specificHeatCapacityCp(state=sta_default)
-    // "Specific heat capacity of medium";
+    Modelica.SIunits.HeatCapacity Cp_fluid=Medium.specificHeatCapacityCp(state=
+        sta_default) "Specific heat capacity of medium";
 
-    //parameter Modelica.SIunits.Density rho=Medium.density(state=
-    // sta_default) "Density of medium";
+    Modelica.SIunits.Density rho=Medium.density(state=sta_default)
+      "Density of medium";
 
-    parameter Modelica.SIunits.HeatCapacity Cp_fluid=4200;
-    parameter Modelica.SIunits.Density rho=1000;
+    //  parameter Modelica.SIunits.HeatCapacity Cp_fluid=4200;
+    // parameter Modelica.SIunits.Density rho=1000;
 
     IDEAS.Fluid.MixingVolumes.MixingVolume vol(
       redeclare package Medium = Medium,
@@ -77,12 +79,7 @@ package TestPipeModel
     Modelica.Fluid.Sensors.Temperature tempSensor(redeclare package Medium =
           Medium)
       annotation (Placement(transformation(extent={{-50,-36},{-30,-16}})));
-    Modelica.Fluid.Sensors.Pressure pressureSensor(redeclare package Medium =
-          Medium)
-      annotation (Placement(transformation(extent={{-48,-4},{-28,16}})));
-   // IDEAS.Media.Specialized.Water.TemperatureDependentDensity.ThermodynamicState
-   //   sta_default
-   //   annotation (Placement(transformation(extent={{-82,32},{-62,52}})));
+
   equation
     connect(Rfg.port_b, Rgb.port_a) annotation (Line(
         points={{-6,62},{6,62}},
@@ -140,10 +137,6 @@ package TestPipeModel
         smooth=Smooth.None));
     connect(tempSensor.port, res.port_b) annotation (Line(
         points={{-40,-36},{-62,-36},{-62,1},{-74,1}},
-        color={0,127,255},
-        smooth=Smooth.None));
-    connect(pressureSensor.port, res.port_b) annotation (Line(
-        points={{-38,-4},{-62,-4},{-62,1},{-74,1}},
         color={0,127,255},
         smooth=Smooth.None));
     annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
@@ -210,8 +203,8 @@ package TestPipeModel
           origin={30,16})));
     Modelica.Blocks.Sources.Step step(
       height=10,
-      offset=273,
-      startTime=500)
+      startTime=500,
+      offset=274)
       annotation (Placement(transformation(extent={{-6,-6},{6,6}},
           rotation=180,
           origin={64,42})));
