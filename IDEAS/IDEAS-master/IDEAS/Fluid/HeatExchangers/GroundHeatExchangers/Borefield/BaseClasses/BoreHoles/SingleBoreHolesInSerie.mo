@@ -5,6 +5,8 @@ model SingleBoreHolesInSerie
     IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.BaseClasses.BoreHoles.Interface.PartialSingleBoreholeSerie(
      redeclare BaseClasses.SingleBoreHoleUTube borHol);
 
+parameter Real test=0;
+
 equation
   assert(gen.singleUTube, "This borefield model is for single U-Tube configuration but you chose double U-Tube configuration in the general borefield record.");
 

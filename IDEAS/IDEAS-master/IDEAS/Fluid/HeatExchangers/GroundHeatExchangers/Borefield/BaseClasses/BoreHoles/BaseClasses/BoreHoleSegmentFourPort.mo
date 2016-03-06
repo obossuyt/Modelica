@@ -10,71 +10,48 @@ model BoreHoleSegmentFourPort "Vertical segment of a borehole"
     final allowFlowReversal1=gen.allowFlowReversal,
     final allowFlowReversal2=gen.allowFlowReversal);
 
-  InternalHEXUTube intHEX(
-    redeclare final package Medium = Medium,
-    final dp1_nominal=dp_nominal,
-    final dp2_nominal=0,
-    final from_dp1=from_dp,
-    final from_dp2=from_dp,
-    final linearizeFlowResistance1=linearizeFlowResistance,
-    final linearizeFlowResistance2=linearizeFlowResistance,
-    final deltaM1=deltaM,
-    final deltaM2=deltaM,
-    final m1_flow_small=gen.m_flow_small,
-    final m2_flow_small=gen.m_flow_small,
-    final soi=soi,
-    final fil=fil,
-    final gen=gen,
-    final allowFlowReversal1=gen.allowFlowReversal,
-    final allowFlowReversal2=gen.allowFlowReversal,
-    final energyDynamics=energyDynamics,
-    final massDynamics=massDynamics,
-    final p1_start=p_start,
-    final T1_start=T_start,
-    final X1_start=X_start,
-    final C1_start=C_start,
-    final C1_nominal=C_nominal,
-    final p2_start=p_start,
-    final T2_start=T_start,
-    final X2_start=X_start,
-    final C2_start=C_start,
-    final C2_nominal=C_nominal,
-    final T_start=T_start,
-    final dynFil=dynFil,
-    final mSenFac=mSenFac,
-    final m1_flow_nominal=m1_flow_nominal,
-    final m2_flow_nominal=m2_flow_nominal)
-    "Internal part of the borehole including the pipes and the filling material"
-    annotation (Placement(transformation(extent={{-70,-10},{-50,10}})));
-
+  StateOfCharge.IntHEX_SoC intHEX_SoC
+    annotation (Placement(transformation(extent={{-236,38},{-216,60}})));
+  StateOfCharge.Example01 example01_1
+    annotation (Placement(transformation(extent={{-258,64},{-238,84}})));
+  StateOfCharge.IntHEX_SoC intHEX_SoC1
+    annotation (Placement(transformation(extent={{-70,-20},{-50,2}})));
+  StateOfCharge.SoilLay_SoC soilLay_SoC annotation (Placement(transformation(
+        extent={{-10,-10},{10,10}},
+        rotation=90,
+        origin={-38,22})));
 equation
-  connect(intHEX.port_b1, port_b1) annotation (Line(
-      points={{-50,6.36364},{-40,6.36364},{-40,60},{100,60}},
-      color={0,127,255},
-      smooth=Smooth.None));
-  connect(intHEX.port_a2, port_a2) annotation (Line(
-      points={{-50,-4.54545},{-40,-4.54545},{-40,-60},{100,-60}},
-      color={0,127,255},
-      smooth=Smooth.None));
-  connect(intHEX.port_b2, port_b2) annotation (Line(
-      points={{-70,-4.54545},{-80,-4.54545},{-80,-60},{-100,-60}},
-      color={0,127,255},
-      smooth=Smooth.None));
-  connect(port_a1, intHEX.port_a1) annotation (Line(
-      points={{-100,60},{-80,60},{-80,6.36364},{-70,6.36364}},
-      color={0,127,255},
-      smooth=Smooth.None));
   if not use_TWall then
-    connect(intHEX.port, soilLay.port_a)
-    annotation (Line(points={{-60,10},{-60,10},{-60,30}},color={191,0,0}));
   else
-    connect(TBouCon.port, intHEX.port) annotation (Line(points={{-60,60},{-46,
-            60},{-46,10},{-60,10}},
-                                  color={191,0,0}));
   end if;
+  connect(intHEX_SoC1.port_b1, port_b1) annotation (Line(
+      points={{-50,-2},{28,-2},{28,60},{100,60}},
+      color={0,127,255},
+      smooth=Smooth.None));
+  connect(intHEX_SoC1.port_a2, port_a2) annotation (Line(
+      points={{-50,-14},{26,-14},{26,-60},{100,-60}},
+      color={0,127,255},
+      smooth=Smooth.None));
+  connect(intHEX_SoC1.port_b2, port_b2) annotation (Line(
+      points={{-70,-14},{-86,-14},{-86,-60},{-100,-60}},
+      color={0,127,255},
+      smooth=Smooth.None));
+  connect(intHEX_SoC1.port_a1, port_a1) annotation (Line(
+      points={{-70,-2},{-84,-2},{-84,60},{-100,60}},
+      color={0,127,255},
+      smooth=Smooth.None));
+  connect(soilLay_SoC.port_a, intHEX_SoC1.port) annotation (Line(
+      points={{-38,12},{-48,12},{-48,2},{-60,2}},
+      color={191,0,0},
+      smooth=Smooth.None));
+  connect(soilLay_SoC.port_b, TBouCon.port) annotation (Line(
+      points={{-38,32},{-50,32},{-50,60},{-60,60}},
+      color={191,0,0},
+      smooth=Smooth.None));
   annotation (
-    Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,
-            100}})),
+    Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{
+            100,100}}),
+                    graphics),
     Icon(graphics={
         Rectangle(
           extent={{-72,80},{68,-80}},

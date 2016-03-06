@@ -2,6 +2,7 @@
 Compiling and linking the model (Visual C++). 
  
 dsmodel.c
+dsmodel.c(1708) : warning C4244: 'function' : conversion from 'double' to 'int', possible loss of data
    Creating library dymosim.lib and object dymosim.exp
  
 Successful generation of Dymosim. 

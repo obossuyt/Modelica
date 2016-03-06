@@ -37,39 +37,40 @@ model InternalHEXUTube "Internal part of a borehole for a U-Tube configuration"
   Modelica.Thermal.HeatTransfer.Components.ConvectiveResistor RConv2
     "Pipe convective resistance"
     annotation (Placement(transformation(extent={{-56,-40},{-80,-16}})));
-  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rpg1(
-    R=RCondGro_val) "Grout thermal resistance"
+  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rpg1(R=RCondGro_val)
+    "Grout thermal resistance"
     annotation (Placement(transformation(extent={{-50,16},{-26,40}})));
-  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rpg2(
-    R=RCondGro_val) "Grout thermal resistance"
+  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rpg2(R=RCondGro_val)
+    "Grout thermal resistance"
     annotation (Placement(transformation(extent={{-48,-40},{-24,-16}})));
-  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rgb1(
-    R=Rgb_val) "Grout thermal resistance"
+  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rgb1(R=Rgb_val)
+    "Grout thermal resistance"
     annotation (Placement(transformation(extent={{52,26},{76,50}})));
-  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rgb2(
-    R=Rgb_val) "Grout thermal resistance"
+  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rgb2(R=Rgb_val)
+    "Grout thermal resistance"
     annotation (Placement(transformation(extent={{52,-40},{76,-16}})));
-  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rgg(
-    R=Rgg_val) "Grout thermal resistance"
-    annotation (Placement(transformation(extent={{-12,-12},{12,12}},
+  Modelica.Thermal.HeatTransfer.Components.ThermalResistor Rgg(R=Rgg_val)
+    "Grout thermal resistance" annotation (Placement(transformation(
+        extent={{-12,-12},{12,12}},
         rotation=-90,
         origin={20,2})));
 
-  Modelica.Thermal.HeatTransfer.Components.HeatCapacitor capFil1(C=Co_fil/2, T(
-        start=T_start, fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.FixedInitial)),
-        der_T(fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.SteadyStateInitial))) if dynFil
-    "Heat capacity of the filling material"
-                                         annotation (
-      Placement(transformation(
+  Modelica.Thermal.HeatTransfer.Components.HeatCapacitor capFil1(
+    C=Co_fil/2,
+    T(start=T_start, fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.FixedInitial)),
+    der_T(fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.SteadyStateInitial))) if     dynFil
+    "Heat capacity of the filling material" annotation (Placement(
+        transformation(
         extent={{-90,36},{-70,16}},
         rotation=0,
         origin={80,0})));
 
-  Modelica.Thermal.HeatTransfer.Components.HeatCapacitor capFil2(C=Co_fil/2, T(
-        start=T_start, fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.FixedInitial)),
-        der_T(fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.SteadyStateInitial))) if   dynFil
-    "Heat capacity of the filling material"                                                                                        annotation (
-      Placement(transformation(
+  Modelica.Thermal.HeatTransfer.Components.HeatCapacitor capFil2(
+    C=Co_fil/2,
+    T(start=T_start, fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.FixedInitial)),
+    der_T(fixed=(energyDynamics == Modelica.Fluid.Types.Dynamics.SteadyStateInitial))) if       dynFil
+    "Heat capacity of the filling material" annotation (Placement(
+        transformation(
         extent={{-90,-36},{-70,-16}},
         rotation=0,
         origin={80,12})));
@@ -79,7 +80,7 @@ protected
       *(gen.rBor^2 - 2*(gen.rTub + gen.eTub)^2)
     "Heat capacity of the whole filling material";
 
-  parameter Modelica.SIunits.SpecificHeatCapacity cpMed=
+   parameter Modelica.SIunits.SpecificHeatCapacity cpMed=
       Medium.specificHeatCapacityCp(Medium.setState_pTX(
       Medium.p_default,
       Medium.T_default,
@@ -101,35 +102,34 @@ protected
   parameter Real x(fixed=false);
 
 public
-  Modelica.Blocks.Sources.RealExpression RVol1(y=
-    convectionResistance(
-    hSeg=gen.hSeg,
-    rBor=gen.rBor,
-    rTub=gen.rTub,
-    eTub=gen.eTub,
-    kMed=kMed,
-    mueMed=mueMed,
-    cpMed=cpMed,
-    m_flow=m1_flow,
-    m_flow_nominal=m1_flow_nominal))
+  Modelica.Blocks.Sources.RealExpression RVol1(y=convectionResistance(
+        hSeg=gen.hSeg,
+        rBor=gen.rBor,
+        rTub=gen.rTub,
+        eTub=gen.eTub,
+        kMed=kMed,
+        mueMed=mueMed,
+        cpMed=cpMed,
+        m_flow=m1_flow,
+        m_flow_nominal=m1_flow_nominal))
     "Convective and thermal resistance at fluid 1"
     annotation (Placement(transformation(extent={{-100,-2},{-80,18}})));
-  Modelica.Blocks.Sources.RealExpression RVol2(y=
-    convectionResistance(hSeg=gen.hSeg,
-    rBor=gen.rBor,
-    rTub=gen.rTub,
-    eTub=gen.eTub,
-    kMed=kMed,
-    mueMed=mueMed,
-    cpMed=cpMed,
-    m_flow=m2_flow,
-    m_flow_nominal=m2_flow_nominal))
+  Modelica.Blocks.Sources.RealExpression RVol2(y=convectionResistance(
+        hSeg=gen.hSeg,
+        rBor=gen.rBor,
+        rTub=gen.rTub,
+        eTub=gen.eTub,
+        kMed=kMed,
+        mueMed=mueMed,
+        cpMed=cpMed,
+        m_flow=m2_flow,
+        m_flow_nominal=m2_flow_nominal))
     "Convective and thermal resistance at fluid 2"
-     annotation (Placement(transformation(extent={{-100,-18},{-80,2}})));
+    annotation (Placement(transformation(extent={{-100,-18},{-80,2}})));
 
 initial equation
-  (x, Rgb_val, Rgg_val, RCondGro_val) =
-    singleUTubeResistances(hSeg=gen.hSeg,
+  (x,Rgb_val,Rgg_val,RCondGro_val) = singleUTubeResistances(
+    hSeg=gen.hSeg,
     rBor=gen.rBor,
     rTub=gen.rTub,
     eTub=gen.eTub,
@@ -138,7 +138,7 @@ initial equation
     kSoi=soi.k,
     kTub=gen.kTub,
     use_Rb=gen.use_Rb,
-    Rb=  gen.Rb,
+    Rb=gen.Rb,
     kMed=kMed,
     mueMed=mueMed,
     cpMed=cpMed,
@@ -146,8 +146,7 @@ initial equation
     printDebug=false);
 
 equation
-    assert(gen.singleUTube,
-  "This model should be used for single U-type borefield, not double U-type. 
+  assert(gen.singleUTube, "This model should be used for single U-type borefield, not double U-type. 
   Check that the record General has been correctly parametrized");
   connect(vol1.heatPort, RConv1.fluid) annotation (Line(
       points={{-10,60},{-60,60},{-60,50},{-90,50},{-90,28},{-82,28}},
@@ -159,13 +158,13 @@ equation
       smooth=Smooth.None));
   if dynFil then
     connect(capFil1.port, Rgb1.port_a) annotation (Line(
-      points={{0,36},{0,38},{52,38}},
-      color={191,0,0},
-      smooth=Smooth.None));
+        points={{0,36},{0,38},{52,38}},
+        color={191,0,0},
+        smooth=Smooth.None));
     connect(capFil2.port, Rgb2.port_a) annotation (Line(
-      points={{0,-24},{0,-28},{52,-28}},
-      color={191,0,0},
-      smooth=Smooth.None));
+        points={{0,-24},{0,-28},{52,-28}},
+        color={191,0,0},
+        smooth=Smooth.None));
   end if;
   connect(Rgb1.port_b, port) annotation (Line(
       points={{76,38},{86,38},{86,100},{0,100}},
@@ -208,11 +207,12 @@ equation
       points={{20,-10},{20,-28},{52,-28}},
       color={191,0,0},
       smooth=Smooth.None));
-    annotation (Dialog(tab="Dynamics"),
-    Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-120},{
-            100,100}}), graphics),
-    Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-120},{100,
-            100}}), graphics={Rectangle(
+  annotation (
+    Dialog(tab="Dynamics"),
+    Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-120},{100,
+            100}}), graphics),
+    Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-120},{100,100}}),
+        graphics={Rectangle(
           extent={{88,54},{-88,64}},
           lineColor={0,0,255},
           pattern=LinePattern.None,
@@ -293,6 +293,6 @@ First implementation.
 </ul>
 </p>
 </html>"),
-    Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{
-            100,100}}), graphics));
+    Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,
+            100}}), graphics));
 end InternalHEXUTube;
