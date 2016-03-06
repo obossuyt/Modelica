@@ -167,7 +167,7 @@ First implementation.
 </ul>
 </html>"));
   end MultipleBoreHolesUTube;
-  annotation (uses(Modelica(version="3.2.1"), IDEAS(version="0.2")));
+
   package BfData
     extends
       IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.Data.Records.BorefieldData;
@@ -356,8 +356,5 @@ First implementation.
               -100,-100},{100,100}}), graphics));
   end Example01;
 
-  model MultipleBoreHolesUTube_SoC
-    extends
-      IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.MultipleBoreHolesUTube;
-  end MultipleBoreHolesUTube_SoC;
+  annotation (uses(Modelica(version="3.2.1"), IDEAS(version="0.2")));
 end StateOfCharge;
