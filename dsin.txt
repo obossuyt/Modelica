@@ -9,7 +9,7 @@ Modelica experiment file
 double experiment(7,1)
        0                   # StartTime    Time at which integration starts
                            #              (and linearization and trimming time)
- 1.7000000000000000E+006   # StopTime     Time at which integration stops
+   10000                   # StopTime     Time at which integration stops
        0                   # Increment    Communication step size, if > 0
      100                   # nInterval    Number of communication intervals, if > 0
  1.0000000000000000E-004   # Tolerance    Relative precision of signals for
@@ -102,7 +102,7 @@ int settings(13,1)
 
 
 #    Names of initial variables
-char initialName(6266,90)
+char initialName(6267,90)
 system.p_ambient
 system.T_ambient
 system.g
@@ -623,6 +623,7 @@ borFie.borHolSer.p_start
 borFie.borHolSer.T_start
 borFie.borHolSer.X_start[1]
 borFie.borHolSer.mSenFac
+borFie.borHolSer.test
 load.height
 load.y
 load.offset
@@ -6370,7 +6371,7 @@ borFie.borHolSer.borHol[1].borHolSeg[10].intHEX.vol2.dynBal.state_default.T
 borFie.borHolSer.borHol[1].borHolSeg[10].intHEX.vol2.dynBal.rho_default
 borFie.borHolSer.borHol[1].borHolSeg[10].intHEX.vol2.dynBal.hStart
 
-double initialValue(6266,6)
+double initialValue(6267,6)
  -1 1.0132500000000000E+005       0                 1.0000000000000000E+100
   1   280   # system.p_ambient
  -1 2.9314999999999998E+002       0                 1.0000000000000000E+100
@@ -7411,6 +7412,8 @@ double initialValue(6266,6)
   1   280   # borFie.borHolSer.X_start[1]
   0       1                       1                 1.0000000000000000E+100
   6   256   # borFie.borHolSer.mSenFac
+ -1       0                       0                       0                
+  1   280   # borFie.borHolSer.test
  -1       1                       0                       0                
   1   280   # load.height
   0       0                       0                       0                
@@ -18953,7 +18956,7 @@ double initialValue(6266,6)
 #   nominal value (and maybe minimum and maximum values given in 
 #   column 3 and 4). If these values are zero, scale(i)=1 is used).
 #
-char initialDescription(6266,184)
+char initialDescription(6267,184)
 Default ambient pressure [Pa|bar]
 Default ambient temperature [K|degC]
 Constant gravity acceleration [m/s2]
@@ -19474,6 +19477,7 @@ Start value of pressure [Pa|bar]
 Start value of temperature [K|degC]
 Start value of mass fractions m_i/m [kg/kg]
 Factor for scaling the sensible thermal mass of the volume [1]
+
 Height of step
 Connector of Real output signal
 Offset of output signal y

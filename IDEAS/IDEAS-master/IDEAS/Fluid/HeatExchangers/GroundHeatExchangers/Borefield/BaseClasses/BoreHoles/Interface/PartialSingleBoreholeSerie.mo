@@ -74,14 +74,16 @@ equation
       smooth=Smooth.None));
       if use_TWall then
         connect(TWall, borHol[1].TWall)
-        annotation (Line(points={{0,110},{0,17.6}},          color={0,0,127}));
+        annotation (Line(points={{0,102},{0,58},{0,15.04},{0.32,15.04}},
+                                                             color={0,0,127}));
       end if;
     end for;
     connect(TWall, borHol[gen.nbSer].TWall)
       annotation (Line(points={{0,110},{0,17.6}},          color={0,0,127}));
 
   TWallAve = sum(borHol.TWallAve)/gen.nbSer;
-  annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}})), Icon(
+  annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
+            -100},{100,100}}), graphics),                                                           Icon(
         graphics={
         Rectangle(
           extent={{-66,62},{-58,-78}},

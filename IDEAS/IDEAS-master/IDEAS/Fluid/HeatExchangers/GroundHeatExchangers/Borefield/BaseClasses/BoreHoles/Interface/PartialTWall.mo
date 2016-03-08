@@ -7,7 +7,11 @@ partial model PartialTWall
     Modelica.Blocks.Interfaces.RealInput TWall(unit="K",displayUnit="degC") if use_TWall
     annotation (Placement(transformation(extent={{20,-20},{-20,20}},
         rotation=90,
-        origin={0,110})));
+        origin={0,102}), iconTransformation(
+        extent={{20,-20},{-20,20}},
+        rotation=90,
+        origin={2,94})));
   annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
-            -100},{100,100}})));
+            -100},{100,100}}), graphics), Icon(coordinateSystem(
+          preserveAspectRatio=false, extent={{-100,-100},{100,100}}), graphics));
 end PartialTWall;

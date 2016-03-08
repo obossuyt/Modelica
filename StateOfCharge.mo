@@ -4,235 +4,12 @@ package StateOfCharge
 replaceable package Medium =
       IDEAS.Media.Specialized.Water.TemperatureDependentDensity;
 
-public
-  model MultipleBoreHolesUTube
-    "Borefield model using single U-tube borehole heat exchanger configuration."
-
-    // Medium in borefield
-    extends
-      IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.Interfaces.partial_multipleBoreHoles;
-        replaceable
-      IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.BaseClasses.BoreHoles.SingleBoreHolesInSerie
-      borHolSer(
-      redeclare final package Medium = Medium,
-      final soi=bfData.soi,
-      final fil=bfData.fil,
-      final gen=bfData.gen,
-      final energyDynamics=energyDynamics,
-      final massDynamics=massDynamics,
-      final T_start=T_start,
-      final dynFil=dynFil,
-      final mSenFac=mSenFac,
-      final use_TWall=true,
-      final m_flow_nominal=m_flow_nominal/bfData.gen.nbBh*bfData.gen.nbSer,
-      final dp_nominal=dp_nominal) constrainedby
-      IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.BaseClasses.BoreHoles.Interface.PartialSingleBoreholeSerie(
-      redeclare package Medium = Medium,
-      soi=bfData.soi,
-      fil=bfData.fil,
-      gen=bfData.gen,
-      energyDynamics=energyDynamics,
-      massDynamics=massDynamics,
-      T_start=T_start,
-      dynFil=dynFil,
-      mSenFac=mSenFac,
-      use_TWall=true,
-      m_flow_nominal=m_flow_nominal/bfData.gen.nbBh*bfData.gen.nbSer,
-      dp_nominal=dp_nominal) "NbSer boreholes in series" annotation (Placement(
-          transformation(
-          extent={{12,13},{-12,-13}},
-          rotation=180,
-          origin={-1,0})));
-
-  equation
-    connect(massFlowRateMultiplier.port_b, borHolSer.port_a)
-      annotation (Line(points={{-60,0},{-13,0}},         color={0,127,255}));
-    connect(borHolSer.port_b, massFlowRateMultiplier1.port_a)
-      annotation (Line(points={{11,0},{60,0}},        color={0,127,255}));
-    connect(TWall_val.y, borHolSer.TWall)
-      annotation (Line(points={{-18.9,40},{-1,40},{-1,14.3}}, color={0,0,127}));
-    annotation (
-      experiment(StopTime=70000, __Dymola_NumberOfIntervals=50),
-      __Dymola_experimentSetupOutput,
-      Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
-          graphics={
-          Rectangle(
-            extent={{-100,60},{100,-66}},
-            lineColor={0,0,0},
-            fillColor={234,210,210},
-            fillPattern=FillPattern.Solid),
-          Ellipse(
-            extent={{-88,-6},{-32,-62}},
-            lineColor={0,0,0},
-            fillColor={223,188,190},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{-82,-12},{-38,-56}},
-            lineColor={0,0,0},
-            fillColor={0,0,255},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{-88,54},{-32,-2}},
-            lineColor={0,0,0},
-            fillColor={223,188,190},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{-82,48},{-38,4}},
-            lineColor={0,0,0},
-            fillColor={0,0,255},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{-26,54},{30,-2}},
-            lineColor={0,0,0},
-            fillColor={223,188,190},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{-20,48},{24,4}},
-            lineColor={0,0,0},
-            fillColor={0,0,255},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{-28,-6},{28,-62}},
-            lineColor={0,0,0},
-            fillColor={223,188,190},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{-22,-12},{22,-56}},
-            lineColor={0,0,0},
-            fillColor={0,0,255},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{36,56},{92,0}},
-            lineColor={0,0,0},
-            fillColor={223,188,190},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{42,50},{86,6}},
-            lineColor={0,0,0},
-            fillColor={0,0,255},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{38,-4},{94,-60}},
-            lineColor={0,0,0},
-            fillColor={223,188,190},
-            fillPattern=FillPattern.Forward),
-          Ellipse(
-            extent={{44,-10},{88,-54}},
-            lineColor={0,0,0},
-            fillColor={0,0,255},
-            fillPattern=FillPattern.Forward)}),
-      Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,
-              100}})),Documentation(info="<html>
-  <p>The proposed model is a so-called hybrid step-response
-model (HSRM). This type of model uses the
-borefield’s temperature response to a step load input.
-An arbitrary load can always be approximated by a superposition
-of step loads. The borefield’s response to
-the load is then calculated by superposition of the step responses
-using the linearity property of the heat diffusion
-equation. The most famous example of HSRM
-for borefields is probably the <i>g-function</i> of Eskilson
-(1987). The major challenge of this approach is to obtain a
-HSRM which is valid for both minute-based and year-based
-simulations. To tackle this problem, a HSRM
-has been implemented. A long-term response model
-is implemented in order to take into account
-the interactions between the boreholes and the
-temperature evolution of the surrounding ground. A
-short-term response model is implemented to
-describe the transient heat flux in the borehole heat exchanger to the surrounding
-ground. The step-response of each model is then calculated and merged into one
-in order to achieve both short- and long-term
-accuracy. Finally an aggregation method is implemented to speed up the calculation.
-However, the aggregation method calculates the temperature for discrete time step. In order to avoid
-abrut temperature changes, the aggregation method is used to calculate the average borehole wall
-temperature instead of the average fluid temperature. The calculated borehole wall temperature is then
-connected to the dynamic model of the borehole heat exchanger.</p>
-<p>More detailed documentation can be found in 
-<a href=\"modelica://IDEAS/Resources/Images/Fluid/HeatExchangers/BroundHeatExchangers/Borefield/UsersGuide/2014-10thModelicaConference-Picard.pdf\">Picard (2014)</a>.
-and in 
-<a href=\"modelica://IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.UsersGuide\">IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.UsersGuide</a>.
-</p>
-<p>
-A verification of this model can be found in 
-<a href=\"modelica://IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.Validation.TrtValidation\">TrtValidation</a>
-.
-</p>
-</html>",   revisions="<html>
-<ul>
-<li>
-July 2014, by Damien Picard:<br>
-First implementation.
-</li>
-</ul>
-</html>"));
-  end MultipleBoreHolesUTube;
 
   package BfData
     extends
       IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.Data.Records.BorefieldData;
   end BfData;
 
-
-
-  model Example01
-    IDEAS.Fluid.Movers.FlowControlled_m_flow fan(
-        redeclare package Medium = Medium, m_flow_nominal=pipeData.m_flow_nominal,
-      motorCooledByFluid=false)
-      annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-          rotation=180,
-          origin={-36,26})));
-    IDEAS.Fluid.HeatExchangers.HeaterCooler_T hea(
-      redeclare package Medium = Medium,
-      m_flow_nominal=pipeData.m_flow_nominal,
-      dp_nominal=pipeData.dp_nominal)
-      annotation (Placement(transformation(extent={{-10,-10},{10,10}},
-          rotation=180,
-          origin={40,26})));
-    Modelica.Blocks.Sources.Step step(
-      height=10,
-      startTime=500,
-      offset=274)
-      annotation (Placement(transformation(extent={{-6,-6},{6,6}},
-          rotation=180,
-          origin={74,52})));
-    Modelica.Blocks.Sources.Constant const(k=pipeData.m_flow_nominal)
-      annotation (Placement(transformation(extent={{-7,-7},{7,7}},
-          rotation=180,
-          origin={9,7})));
-    Modelica.Fluid.Sources.Boundary_pT boundary(          redeclare package
-        Medium = Medium, nPorts=2)
-      annotation (Placement(transformation(extent={{-78,42},{-58,62}})));
-    MultipleBoreHolesUTube_SoC multipleBoreHolesUTube_SoC
-      annotation (Placement(transformation(extent={{-14,-38},{6,-18}})));
-  equation
-    connect(hea.TSet,step. y) annotation (Line(
-        points={{52,20},{60,20},{60,52},{67.4,52}},
-        color={0,0,127},
-        smooth=Smooth.None));
-    connect(fan.port_a,hea. port_b) annotation (Line(
-        points={{-26,26},{30,26}},
-        color={0,127,255},
-        smooth=Smooth.None));
-    connect(const.y,fan. m_flow_in) annotation (Line(
-        points={{1.3,7},{-35.8,7},{-35.8,14}},
-        color={0,0,127},
-        smooth=Smooth.None));
-    connect(fan.port_b,boundary. ports[1]) annotation (Line(
-        points={{-46,26},{-50,26},{-50,54},{-58,54}},
-        color={0,127,255},
-        smooth=Smooth.None));
-    connect(hea.port_a, multipleBoreHolesUTube_SoC.port_b) annotation (Line(
-        points={{50,26},{66,26},{66,-28},{6,-28}},
-        color={0,127,255},
-        smooth=Smooth.None));
-    connect(multipleBoreHolesUTube_SoC.port_a, fan.port_b) annotation (Line(
-        points={{-14,-28},{-72,-28},{-72,26},{-46,26}},
-        color={0,127,255},
-        smooth=Smooth.None));
-    annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{
-              -100,-100},{100,100}}), graphics));
-  end Example01;
 
   package BaseClasses
     model SoilLay_SoC
@@ -276,6 +53,11 @@ First implementation.
       annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
                 -100},{100,100}}), graphics), Icon(coordinateSystem(
               preserveAspectRatio=false, extent={{-100,-100},{100,100}}), graphics={
+            Rectangle(
+              extent={{86,80},{124,16}},
+              lineColor={0,0,255},
+              fillColor={255,255,170},
+              fillPattern=FillPattern.Solid),
               Line(
               points={{96,60},{60,60}},
               color={0,0,255},
@@ -351,7 +133,13 @@ First implementation.
       annotation (Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,
                 -120},{100,100}}), graphics), Icon(coordinateSystem(
               preserveAspectRatio=false, extent={{-100,-120},{100,100}}),
-            graphics={Line(
+            graphics={
+            Rectangle(
+              extent={{84,-72},{122,-136}},
+              lineColor={0,0,255},
+              fillColor={255,255,170},
+              fillPattern=FillPattern.Solid),
+                      Line(
               points={{94,-92},{20,-92},{20,-80}},
               color={0,0,255},
               smooth=Smooth.None), Line(
@@ -361,7 +149,7 @@ First implementation.
     end IntHEX_SoC;
 
     model BoreHoleSegmentFourPort_SoC "Vertical segment of a borehole"
-      extends StateOfCharge.BaseClasses.PartialBoreHoleSegment_SoC;
+      extends PartialBoreHoleSegment_SoC;
 
       extends IDEAS.Fluid.Interfaces.PartialFourPortInterface(
         redeclare final package Medium1 = Medium,
@@ -381,8 +169,11 @@ First implementation.
       IntHEX_SoC intHEX_SoC
         annotation (Placement(transformation(extent={{-70,-12},{-50,10}})));
       Modelica.Blocks.Interfaces.RealOutput SoC annotation (Placement(
-            transformation(extent={{96,50},{116,70}}), iconTransformation(extent={{92,
-                -98},{112,-78}})));
+            transformation(extent={{-6,-104},{14,-84}}),
+                                                       iconTransformation(extent={{-12,-12},
+                {12,12}},
+            rotation=270,
+            origin={0,-104})));
     equation
       if not use_TWall then
       else
@@ -407,11 +198,20 @@ First implementation.
           points={{-70,6},{-84,6},{-84,60},{-100,60}},
           color={0,127,255},
           smooth=Smooth.None));
+      SoC =  StateOfCharge;
+
       annotation (
-        Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,
-                100}}), graphics),
-        Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,100}}),
+        Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},
+                {100,100}}),
+                        graphics),
+        Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{
+                100,100}}),
             graphics={
+            Rectangle(
+              extent={{-38,-86},{36,-112}},
+              lineColor={0,0,255},
+              fillColor={255,255,170},
+              fillPattern=FillPattern.Solid),
             Rectangle(
               extent={{-72,80},{68,-80}},
               lineColor={0,0,255},
@@ -439,7 +239,11 @@ First implementation.
               extent={{-72,-68},{68,-80}},
               lineColor={0,0,0},
               fillColor={192,192,192},
-              fillPattern=FillPattern.Backward)}),
+              fillPattern=FillPattern.Backward),
+            Line(
+              points={{0,-84},{0,-92}},
+              color={0,0,255},
+              smooth=Smooth.None)}),
         Documentation(info="<html>
 <p>
 Horizontal layer that is used to model a U-tube borehole heat exchanger. 
@@ -468,8 +272,6 @@ First implementation.
 </li>
 </ul>
 </html>"));
-      SoC =  StateOfCharge;
-
     end BoreHoleSegmentFourPort_SoC;
 
     partial model PartialBoreHoleSegment_SoC
@@ -506,8 +308,8 @@ First implementation.
           color={0,0,127},
           smooth=Smooth.None));
       else
-        connect(TBouCon.T, TWall) annotation (Line(points={{-60,82},{-60,82},{0,82},
-                {0,110}},
+        connect(TBouCon.T, TWall) annotation (Line(points={{-60,82},{-60,82},{0,
+                82},{0,102}},
                    color={0,0,127}));
       end if;
 
@@ -581,7 +383,8 @@ First implementation.
             color={0,127,255},
             smooth=Smooth.None));
         if use_TWall then
-          connect(TWall, borHolSeg[i].TWall) annotation (Line(points={{0,110},{0,11}},        color={0,0,127}));
+          connect(TWall, borHolSeg[i].TWall) annotation (Line(points={{0,102},{
+                  0,56},{0,9.4},{0.2,9.4}},                                                   color={0,0,127}));
         end if;
       end for;
       connect(TWall, borHolSeg[gen.nVer].TWall) annotation (Line(points={{0,110},{0,
@@ -596,7 +399,7 @@ First implementation.
             extent={{-100,-100},{100,100}},
             grid={2,2},
             initialScale=0.5), graphics={Rectangle(
-              extent={{-94,94},{94,62}},
+              extent={{-48,96},{48,84}},
               lineColor={0,0,255},
               fillColor={255,255,170},
               fillPattern=FillPattern.Solid)}),
@@ -683,7 +486,11 @@ First implementation.
             preserveAspectRatio=false,
             extent={{-100,-100},{100,100}},
             grid={2,2},
-            initialScale=0.5)),
+            initialScale=0.5), graphics={Rectangle(
+              extent={{-30,62},{34,46}},
+              lineColor={0,0,255},
+              fillColor={255,255,170},
+              fillPattern=FillPattern.Solid)}),
         Diagram(coordinateSystem(
             preserveAspectRatio=false,
             extent={{-100,-100},{100,100}},
@@ -781,5 +588,286 @@ First implementation.
 </html>"));
     end SingleBoreHolesInSerie_SoC;
   end BaseClasses;
+
+  model MultipleBoreHolesUTube_SoC
+    "Borefield model using single U-tube borehole heat exchanger configuration."
+
+    // Medium in borefield
+    extends
+      IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.Interfaces.partial_multipleBoreHoles;
+        replaceable StateOfCharge.BaseClasses.SingleBoreHolesInSerie_SoC
+      borHolSer(
+      redeclare final package Medium = Medium,
+      final soi=bfData.soi,
+      final fil=bfData.fil,
+      final gen=bfData.gen,
+      final energyDynamics=energyDynamics,
+      final massDynamics=massDynamics,
+      final T_start=T_start,
+      final dynFil=dynFil,
+      final mSenFac=mSenFac,
+      final use_TWall=true,
+      final m_flow_nominal=m_flow_nominal/bfData.gen.nbBh*bfData.gen.nbSer,
+      final dp_nominal=dp_nominal) constrainedby
+      IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.BaseClasses.BoreHoles.Interface.PartialSingleBoreholeSerie(
+      redeclare package Medium = Medium,
+      soi=bfData.soi,
+      fil=bfData.fil,
+      gen=bfData.gen,
+      energyDynamics=energyDynamics,
+      massDynamics=massDynamics,
+      T_start=T_start,
+      dynFil=dynFil,
+      mSenFac=mSenFac,
+      use_TWall=true,
+      m_flow_nominal=m_flow_nominal/bfData.gen.nbBh*bfData.gen.nbSer,
+      dp_nominal=dp_nominal) "NbSer boreholes in series" annotation (Placement(
+          transformation(
+          extent={{12,13},{-12,-13}},
+          rotation=180,
+          origin={-1,0})));
+
+  equation
+    connect(massFlowRateMultiplier.port_b, borHolSer.port_a)
+      annotation (Line(points={{-60,0},{-36,0},{-36,1.55431e-015},{-13,
+            1.55431e-015}},                              color={0,127,255}));
+    connect(borHolSer.port_b, massFlowRateMultiplier1.port_a)
+      annotation (Line(points={{11,-1.33227e-015},{36,-1.33227e-015},{36,0},{60,
+            0}},                                      color={0,127,255}));
+    connect(TWall_val.y, borHolSer.TWall)
+      annotation (Line(points={{-18.9,40},{-0.76,40},{-0.76,12.22}},
+                                                              color={0,0,127}));
+    annotation (
+      experiment(StopTime=70000, __Dymola_NumberOfIntervals=50),
+      __Dymola_experimentSetupOutput,
+      Icon(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,
+              100}}),
+          graphics={
+          Rectangle(
+            extent={{-100,60},{100,-66}},
+            lineColor={0,0,0},
+            fillColor={234,210,210},
+            fillPattern=FillPattern.Solid),
+          Ellipse(
+            extent={{-88,-6},{-32,-62}},
+            lineColor={0,0,0},
+            fillColor={223,188,190},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{-82,-12},{-38,-56}},
+            lineColor={0,0,0},
+            fillColor={0,0,255},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{-88,54},{-32,-2}},
+            lineColor={0,0,0},
+            fillColor={223,188,190},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{-82,48},{-38,4}},
+            lineColor={0,0,0},
+            fillColor={0,0,255},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{-26,54},{30,-2}},
+            lineColor={0,0,0},
+            fillColor={223,188,190},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{-20,48},{24,4}},
+            lineColor={0,0,0},
+            fillColor={0,0,255},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{-28,-6},{28,-62}},
+            lineColor={0,0,0},
+            fillColor={223,188,190},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{-22,-12},{22,-56}},
+            lineColor={0,0,0},
+            fillColor={0,0,255},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{36,56},{92,0}},
+            lineColor={0,0,0},
+            fillColor={223,188,190},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{42,50},{86,6}},
+            lineColor={0,0,0},
+            fillColor={0,0,255},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{38,-4},{94,-60}},
+            lineColor={0,0,0},
+            fillColor={223,188,190},
+            fillPattern=FillPattern.Forward),
+          Ellipse(
+            extent={{44,-10},{88,-54}},
+            lineColor={0,0,0},
+            fillColor={0,0,255},
+            fillPattern=FillPattern.Forward),
+          Rectangle(
+            extent={{-100,78},{100,66}},
+            lineColor={0,0,255},
+            fillColor={255,255,170},
+            fillPattern=FillPattern.Solid)}),
+      Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},{100,
+              100}}), graphics),
+                      Documentation(info="<html>
+  <p>The proposed model is a so-called hybrid step-response
+model (HSRM). This type of model uses the
+borefield’s temperature response to a step load input.
+An arbitrary load can always be approximated by a superposition
+of step loads. The borefield’s response to
+the load is then calculated by superposition of the step responses
+using the linearity property of the heat diffusion
+equation. The most famous example of HSRM
+for borefields is probably the <i>g-function</i> of Eskilson
+(1987). The major challenge of this approach is to obtain a
+HSRM which is valid for both minute-based and year-based
+simulations. To tackle this problem, a HSRM
+has been implemented. A long-term response model
+is implemented in order to take into account
+the interactions between the boreholes and the
+temperature evolution of the surrounding ground. A
+short-term response model is implemented to
+describe the transient heat flux in the borehole heat exchanger to the surrounding
+ground. The step-response of each model is then calculated and merged into one
+in order to achieve both short- and long-term
+accuracy. Finally an aggregation method is implemented to speed up the calculation.
+However, the aggregation method calculates the temperature for discrete time step. In order to avoid
+abrut temperature changes, the aggregation method is used to calculate the average borehole wall
+temperature instead of the average fluid temperature. The calculated borehole wall temperature is then
+connected to the dynamic model of the borehole heat exchanger.</p>
+<p>More detailed documentation can be found in 
+<a href=\"modelica://IDEAS/Resources/Images/Fluid/HeatExchangers/BroundHeatExchangers/Borefield/UsersGuide/2014-10thModelicaConference-Picard.pdf\">Picard (2014)</a>.
+and in 
+<a href=\"modelica://IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.UsersGuide\">IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.UsersGuide</a>.
+</p>
+<p>
+A verification of this model can be found in 
+<a href=\"modelica://IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.Validation.TrtValidation\">TrtValidation</a>
+.
+</p>
+</html>",   revisions="<html>
+<ul>
+<li>
+July 2014, by Damien Picard:<br>
+First implementation.
+</li>
+</ul>
+</html>"));
+  end MultipleBoreHolesUTube_SoC;
+
+  model Example01_SoC
+    "Model of a borefield in a 8x1 boreholes line configuration and a constant heat injection rate"
+
+    extends Modelica.Icons.Example;
+
+    parameter Modelica.SIunits.Temperature T_start = bfData.gen.T_start;
+    package Medium = Modelica.Media.Water.ConstantPropertyLiquidWater;
+
+    replaceable parameter
+      IDEAS.Fluid.HeatExchangers.GroundHeatExchangers.Borefield.Data.BorefieldData.SandStone_Bentonite_c8x1_h110_b5_d3600_T283
+      bfData annotation (Placement(transformation(extent={{-100,80},{-80,100}})));
+    parameter Integer lenSim=3600*24*366 "length of the simulation";
+
+    replaceable MultipleBoreHolesUTube_SoC
+      borFie(
+      lenSim=lenSim,
+      redeclare package Medium = Medium,
+      bfData=bfData,
+      T_start=T_start) "borefield"
+      annotation (Placement(transformation(extent={{-20,-60},{20,-20}})));
+    Modelica.Blocks.Sources.Step load(height=1, startTime=36000)
+      "load for the borefield"
+      annotation (Placement(transformation(extent={{26,-18},{40,-4}})));
+
+    IDEAS.Fluid.HeatExchangers.HeaterCooler_u hea(
+      redeclare package Medium = Medium,
+      dp_nominal=10000,
+      show_T=true,
+      energyDynamics=Modelica.Fluid.Types.Dynamics.DynamicFreeInitial,
+      m_flow_nominal=bfData.m_flow_nominal,
+      m_flow(start=bfData.m_flow_nominal),
+      Q_flow_nominal=bfData.gen.q_ste*bfData.gen.nbBh*bfData.gen.hBor,
+      T_start=T_start,
+      p_start=100000)
+      annotation (Placement(transformation(extent={{30,22},{10,2}})));
+    Modelica.Fluid.Sources.Boundary_pT boundary(          redeclare package
+        Medium = Medium, nPorts=1)
+      annotation (Placement(transformation(extent={{-60,40},{-40,60}})));
+    IDEAS.Fluid.Sensors.TemperatureTwoPort senTem_out(
+      redeclare package Medium = Medium,
+      m_flow_nominal=bfData.m_flow_nominal,
+      T_start=T_start)
+      annotation (Placement(transformation(extent={{38,-50},{58,-30}})));
+    IDEAS.Fluid.Movers.FlowControlled_m_flow pum(
+      redeclare package Medium = Medium,
+      dynamicBalance=false,
+      m_flow_nominal=bfData.m_flow_nominal,
+      T_start=T_start,
+      motorCooledByFluid=false,
+      addPowerToMedium=false,
+      filteredSpeed=false)
+      annotation (Placement(transformation(extent={{-16,22},{-36,2}})));
+    Modelica.Blocks.Sources.Constant mFlo(k=bfData.m_flow_nominal)
+      annotation (Placement(transformation(extent={{-60,-18},{-48,-6}})));
+    IDEAS.Fluid.Sensors.TemperatureTwoPort senTem_in(
+      redeclare package Medium = Medium,
+      m_flow_nominal=bfData.m_flow_nominal,
+      T_start=T_start)
+      annotation (Placement(transformation(extent={{-60,-50},{-40,-30}})));
+  equation
+    connect(load.y, hea.u) annotation (Line(
+        points={{40.7,-11},{52,-11},{52,6},{32,6}},
+        color={0,0,127},
+        smooth=Smooth.None));
+    connect(hea.port_a, senTem_out.port_b) annotation (Line(
+        points={{30,12},{70,12},{70,-40},{58,-40}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(senTem_out.port_a, borFie.port_b) annotation (Line(
+        points={{38,-40},{20,-40}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(mFlo.y, pum.m_flow_in) annotation (Line(
+        points={{-47.4,-12},{-25.8,-12},{-25.8,0}},
+        color={0,0,127},
+        smooth=Smooth.None));
+    connect(pum.port_a, hea.port_b) annotation (Line(
+        points={{-16,12},{10,12}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(boundary.ports[1], pum.port_b) annotation (Line(
+        points={{-40,50},{-36,50},{-36,12}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(pum.port_b, senTem_in.port_a) annotation (Line(
+        points={{-36,12},{-78,12},{-78,-40},{-60,-40}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    connect(senTem_in.port_b, borFie.port_a) annotation (Line(
+        points={{-40,-40},{-20,-40}},
+        color={0,127,255},
+        smooth=Smooth.None));
+    annotation (
+      Diagram(coordinateSystem(preserveAspectRatio=false, extent={{-100,-100},
+              {100,100}}),
+                      graphics),
+      experiment(StopTime=1.7e+006, __Dymola_NumberOfIntervals=100),
+      __Dymola_experimentSetupOutput,
+      Documentation(info="<html>
+</html>",   revisions="<html>
+<ul>
+<li>
+July 2014, by Damien Picard:<br>
+First implementation.
+</li>
+</ul>
+</html>"));
+  end Example01_SoC;
   annotation (uses(Modelica(version="3.2.1"), IDEAS(version="0.2")));
 end StateOfCharge;
